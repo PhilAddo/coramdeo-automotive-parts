@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="main.js"></script>
+    <title>Home</title>
+  </head>
+  <body id="home-page-bg-image">
+    <div id="head-container">
+      <div id="head-container-inner">
+        <h2 onclick="goToPage('index.html');" id="site-name">CORAMDEO AUTOMOTIVE PARTS</h2>
+      </div>
+      <div id="sign-in-btn-container">
+        <span><a href="login.html">SIGN IN</a></span>
+      </div>
+    </div>
+    <!-- search and cart container -->
+    <div class="section-container" id="search-container">
+      <input
+        type="search"
+        class="search-container-item"
+        placeholder="Search for parts"
+        id="search-input"
+        oninput="searchForParts();"
+      />
+        <span class="search-container-item" id="cart-btn" onclick="goToPage('view-cart.html');">Cart (0) items</span>
+    </div>
+
+    <div id="main-container" style="margin-top: 40px">
+      <div class="section-container" id="cat-bg">
+        <h2>Part Categories</h2>
+        <p>Select a part category below to view available parts.</p>
+
+        <div id="part-categories-container">
+          <!-- <div class="part-category-item">
+                <img src="img/def-img.png" alt="def-img" class="part-img">
+                <span class="part-category-name">Engine & Powertrain</span>
+            </div>
+            <div class="part-category-item">
+                <img src="img/def-img.png" alt="def-img" class="part-img">
+                <span class="part-category-name">Engine & Powertrain</span>
+            </div>
+            <div class="part-category-item">
+                <img src="img/def-img.png" alt="def-img" class="part-img">
+                <span class="part-category-name">Engine & Powertrain</span>
+            </div>
+            <div class="part-category-item">
+                <img src="img/def-img.png" alt="def-img" class="part-img">
+                <span class="part-category-name">Engine & Powertrain</span>
+            </div>
+            <div class="part-category-item">
+                <img src="img/def-img.png" alt="def-img" class="part-img">
+                <span class="part-category-name">Engine & Powertrain</span>
+            </div>
+            <div class="part-category-item">
+                <img src="img/def-img.png" alt="def-img" class="part-img">
+                <span class="part-category-name">Engine & Powertrain</span>
+            </div>
+            <div class="part-category-item">
+                <img src="img/def-img.png" alt="def-img" class="part-img">
+                <span class="part-category-name">Engine & Powertrain</span>
+            </div>
+            <div class="part-category-item">
+                <img src="img/def-img.png" alt="def-img" class="part-img">
+                <span class="part-category-name">Engine & Powertrain</span>
+            </div>
+            <div class="part-category-item">
+                <img src="img/def-img.png" alt="def-img" class="part-img">
+                <span class="part-category-name">Engine & Powertrain</span>
+            </div> -->
+        </div>
+      </div>
+
+      <div class="section-container">
+        <h2 id="category-name-label">Category Name</h2>
+        <div id="available-parts-container">
+          <!-- <div class="available-part-item">
+                <div class="available-part-img-container">
+                    <img src="img/engine-blk-img.webp" alt="def-img" class="part-img-large">
+                </div>
+                <div class="available-part-label">
+                    <b>Engine block</b>
+                    <i>GHS 6,000</i>
+                    <input type="button" class="btn" value="Add to cart">
+                </div>
+            </div>
+            <div class="available-part-item">
+                <div class="available-part-img-container">
+                    <img src="img/engine-blk-img.webp" alt="def-img" class="part-img-large">
+                </div>
+                <div class="available-part-label">
+                    <b>Engine block</b>
+                    <i>GHS 6,000</i>
+                    <input type="button" class="btn" value="Add to cart">
+                </div>
+            </div>
+            <div class="available-part-item">
+                <div class="available-part-img-container">
+                    <img src="img/engine-blk-img.webp" alt="def-img" class="part-img-large">
+                </div>
+                <div class="available-part-label">
+                    <b>Engine block</b>
+                    <i>GHS 6,000</i>
+                    <input type="button" class="btn" value="Add to cart">
+                </div>
+            </div> -->
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    let currentContainer = "registeration-container";
+
+    function switchContainer(id) {
+      let container1 = (document.getElementById(id).style.display = "block");
+      let container2 = (document.getElementById(
+        currentContainer
+      ).style.display = "none");
+      currentContainer = id;
+    }
+
+    let activeUserIndex = sessionStorage.getItem("activeUserIndex");
+    let signInBtnContainer = document.getElementById("sign-in-btn-container");
+    //checks if the current user is signed in
+    if (activeUserIndex != null) {
+      signInBtnContainer.innerHTML = `<span onclick="signOut();">SIGN OUT</span>`;
+      let cartBtn = (document.getElementById(
+        "cart-btn"
+      ).innerHTML = `Cart (${userDataArray[activeUserIndex].cart.length}) items`);
+    } else {
+      signInBtnContainer.innerHTML = `<span><a href="login.html">SIGN IN</a></span>`;
+    }
+
+    //lists all available part categories
+    function showPartCategories() {
+      let partCategoriesContainer = document.getElementById(
+        "part-categories-container"
+      );
+      productsDataArray.map((item, index) => {
+        partCategoriesContainer.innerHTML += `
+        <div class="part-category-item" onclick="showAvailableParts(${index})">
+                <img src="img/${item.categoryImg}" alt="${item.categoryImg}" class="part-img">
+                <span class="part-category-name">${item.categoryName}</span>
+        </div>
+        `;
+      });
+    }
+
+    //shows the available parts for the category with the passed index
+    function showAvailableParts(categoryIndex) {
+      let categoryNameLabel = (document.getElementById(
+        "category-name-label"
+      ).innerHTML = productsDataArray[categoryIndex].categoryName);
+      let availablePartsContainer = document.getElementById(
+        "available-parts-container"
+      );
+      availablePartsContainer.innerHTML = "";
+      productsDataArray[categoryIndex].availableParts.map((item, index) => {
+        let text = "Add to cart";
+        if (activeUserIndex != null) {
+          let partStatus = isAddedToCart(item.partName)[0];
+          if (partStatus == true) {
+            text = "Remove from cart";
+          }
+        }
+
+        availablePartsContainer.innerHTML += `
+        <div class="available-part-item">
+                <div class="available-part-img-container">
+                    <img src="img/${item.partImg}" alt="${item.partImg}" class="part-img-large">
+                </div>
+                <div class="available-part-label">
+                    <b>${item.partName}</b>
+                    <i>GHS ${item.partPrice}</i>
+                    <input type="button" class="btn" value="${text}" onclick="addProductToCart(${categoryIndex}, ${index});">
+                </div>
+            </div><br>
+        `;
+      });
+      setCategoryBgImage(productsDataArray[categoryIndex].categoryName);
+    }
+
+    function setCategoryBgImage(categoryName){
+      let homePageBgImage = document.getElementById("home-page-bg-image");
+      if(categoryName == "Engine & Powertrain"){
+        homePageBgImage.style.backgroundImage = "url(img/engine-img.jpg), url(img/car-gif.gif)";
+      } else if(categoryName == "Electrical & Electronics"){
+        homePageBgImage.style.backgroundImage = "url(img/circuit-img.jpg), url(img/car-gif.gif)"
+      } else if(categoryName == "Braking System"){
+        homePageBgImage.style.backgroundImage = "url(img/brake-img.png), url(img/car-gif.gif)"
+      } else {
+        homePageBgImage.style.backgroundImage = "url(img/diagram-img.gif), url(img/car-gif.gif)"
+      }
+    }
+
+    //adds a product to the cart using the product's category and part indexes
+    function addProductToCart(categoryIndex, partIndex) {
+      if (activeUserIndex == null) {
+        alert("Please sign in first to begin shopping.");
+        return;
+      }
+      let product = productsDataArray[categoryIndex].availableParts[partIndex];
+      product.partQuantity = 1;
+
+      let res = isAddedToCart(product.partName);
+
+      if (res[0] == false) {
+        userDataArray[activeUserIndex].cart.push(product);
+        let cartBtn = (document.getElementById(
+          "cart-btn"
+        ).innerHTML = `Cart (${userDataArray[activeUserIndex].cart.length}) items`);
+        let clickedBtn = (document.getElementsByClassName("btn")[
+          partIndex
+        ].value = "Remove from cart");
+        //saves the user data array
+        saveUserDataArray();
+      } else if (res[0] == true) {
+        userDataArray[activeUserIndex].cart.splice(res[1], 1);
+        let cartBtn = (document.getElementById(
+          "cart-btn"
+        ).innerHTML = `Cart (${userDataArray[activeUserIndex].cart.length}) items`);
+        let clickedBtn = (document.getElementsByClassName("btn")[
+          partIndex
+        ].value = "Add to cart");
+        //saves the user data array
+        saveUserDataArray();
+      }
+    }
+
+    //checks if the passed part is already in the current user'os cart
+    function isAddedToCart(partName) {
+      if (activeUserIndex == null) {
+        return;
+      }
+      let activeUser = userDataArray[activeUserIndex];
+      let val = false,
+        i = null;
+      activeUser.cart.map((item, index) => {
+        if (partName == item.partName) {
+          val = true;
+          i = index;
+        }
+      });
+      return [val, i];
+    }
+
+    function searchForParts(){
+      let searchInput = document.getElementById("search-input").value.toUpperCase().trim();
+      let availablePartsContainer = document.getElementById(
+        "available-parts-container"
+      );
+      availablePartsContainer.innerHTML = "";
+      let matchCount = 0;
+      for(x = 0; x < productsDataArray.length; x++){
+        productsDataArray[x].availableParts.map((item, index) => {
+          let text = "Add to cart";
+        if (activeUserIndex != null) {
+          let partStatus = isAddedToCart(item.partName)[0];
+          if (partStatus == true) {
+            text = "Remove from cart";
+          }
+        }
+
+        var ind = item.partName.toUpperCase().indexOf(searchInput);
+      if (ind > -1 && searchInput != "") {
+        matchCount++;
+        availablePartsContainer.innerHTML += `
+        <div class="available-part-item">
+                <div class="available-part-img-container">
+                    <img src="img/${item.partImg}" alt="${item.partImg}" class="part-img-large">
+                </div>
+                <div class="available-part-label">
+                    <b>${item.partName}</b>
+                    <i>GHS ${item.partPrice}</i>
+                    <input type="button" class="btn" value="${text}" onclick="addProductToCart(${x}, ${matchCount-1});">
+                </div>
+        </div>
+        `;
+      }
+        });
+      }
+      
+    if (availablePartsContainer.innerHTML == "" && searchInput != "") {
+      availablePartsContainer.innerHTML = `<i id="notFound">Sorry, no part with the name ${searchInput} was found.</i>`;
+    }
+    if(searchInput == ""){
+      showAvailableParts(0);
+    }
+    }
+
+    function hideParts(){
+      let availablePartsContainer = document.getElementById(
+        "available-parts-container"
+      ).innerHTML = "";
+    }
+
+    window.onload = showPartCategories();
+    showAvailableParts(0);
+  </script>
+</html>

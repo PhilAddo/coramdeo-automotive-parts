@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="main.js"></script>
+    <title>Cart</title>
+  </head>
+  <body id="cart-page-bg-image">
+    <div id="head-container">
+      <div id="head-container-inner">
+        <h2 onclick="goToPage('index.html');" id="site-name">CORAMDEO AUTOMOTIVE PARTS</h2>
+      </div>
+      <div id="sign-in-btn-container">
+        <span><a href="login.html">SIGN IN</a></span>
+      </div>
+    </div>
+    <div id="main-container">
+        
+      <div class="section-container">
+        <h2>Cart</h2>
+        <p>Review items and purchase</p>
+
+      </div>
+
+      <div class="section-container">
+        <h2>Item Summary</h2>
+
+        <div class="payment-container">
+            <p  class="payment-field">
+            Subtotal
+            <b>GHS <span id="sub-total-container">0.00</span></b>
+        </p>
+        </div>
+        
+        <table id="item-summary-table">
+          <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Remove</th>
+          </tr>
+          <tr>
+            <td>
+                <div>
+                    <img src="img/engine-blk-img.webp" alt="def-img" class="part-img-large">
+                </div>
+                <b>Engine Block</b>
+            </td>
+            <td>
+                <input type="number" value="1" class="quantity-input-field">
+            </td>
+            <td>GHC 6,000.00</td>
+            <td>
+              <input type="button" class="btn" value="Remove item">
+            </td>
+          </tr>
+          <tr>
+            <td>
+                <div>
+                    <img src="img/engine-blk-img.webp" alt="def-img" class="part-img-large">
+                </div>
+                <b>Engine Block</b>
+            </td>
+            <td>
+                <input type="number" value="1" class="quantity-input-field">
+            </td>
+            <td>GHC 6,000.00</td>
+            <td>
+              <input type="button" class="btn" value="Remove item">
+            </td>
+          </tr>
+          <tr>
+            <td>
+                <div>
+                    <img src="img/engine-blk-img.webp" alt="def-img" class="part-img-large">
+                </div>
+                <b>Engine Block</b>
+            </td>
+            <td>
+                <input type="number" value="1" class="quantity-input-field">
+            </td>
+            <td>GHC 6,000.00</td>
+            <td>
+              <input type="button" class="btn" value="Remove item">
+            </td>
+          </tr>
+        </table><br>
+
+        <input type="button" class="pay-btn" id="checkout-btn" value="Checkout (GHS 0.00)" onclick="goToPage('payment.html')">
+      </div>
+
+      
+    </div>
+  </body>
+  <script>
+    let currentContainer = "registeration-container";
+
+    function switchContainer(id) {
+      let container1 = (document.getElementById(id).style.display = "block");
+      let container2 = (document.getElementById(
+        currentContainer
+      ).style.display = "none");
+      currentContainer = id;
+    }
+
+    let activeUserIndex = sessionStorage.getItem("activeUserIndex");
+    let signInBtnContainer = document.getElementById("sign-in-btn-container");
+    //checks if the current user is signed in
+    if(activeUserIndex != null){
+      signInBtnContainer.innerHTML = `<span onclick="signOut();">SIGN OUT</span>`;
+      showItemSummary();
+    }else{
+      signInBtnContainer.innerHTML = `<span><a href="login.html">SIGN IN</a></span>`;
+      window.location.href = "index.html";
+    }
+
+    //displays all items in user's cart in the item summary table
+    function showItemSummary(){
+      let itemSummaryTable = document.getElementById("item-summary-table");
+      itemSummaryTable.innerHTML = `
+      <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Remove</th>
+      </tr>
+      `;
+      if(userDataArray[activeUserIndex].cart.length == 0){
+        itemSummaryTable.innerHTML += `
+        <tr>
+          <td colspan='4' style="color: gray">There are no items in your cart. Add items to your cart to view item summary here.</td>  
+        </tr>
+        `;
+        return;
+      }
+      userDataArray[activeUserIndex].cart.map((item, index) => {
+        itemSummaryTable.innerHTML += `
+        <tr>
+            <td>
+                <div>
+                    <img src="img/${item.partImg}" alt="${item.partImg}" class="part-img-large">
+                </div>
+                <b>${item.partName}</b>
+            </td>
+            <td>
+                <input type="number" value="${item.partQuantity}" class="quantity-input-field" oninput="updatePartQuantity(${index});">
+            </td>
+            <td>GHC <span class="price">${item.partPrice * item.partQuantity}</span></td>
+            <td>
+              <input type="button" class="btn" value="Remove item" onclick="removeItem(${index});">
+            </td>
+          </tr>
+        `;
+      });
+      calculateTotal();
+    }
+
+    //removes the item which has the passed itemIndex from the user's cart
+    function removeItem(itemIndex){
+      userDataArray[activeUserIndex].cart.splice(itemIndex, 1);
+      saveUserDataArray();
+      showItemSummary(); 
+    }
+
+    //upates the quantity value of the part/item which has the passed itemIndex
+    function updatePartQuantity(itemIndex){
+      let value = document.getElementsByClassName("quantity-input-field")[itemIndex].value;
+      if(parseInt(value) < 1){
+        value = 1;
+      }else if(value.trim() == ""){
+        value = 0;
+      }
+      userDataArray[activeUserIndex].cart[itemIndex].partQuantity = parseInt(value);
+      saveUserDataArray();
+      showItemSummary();
+    }
+
+    //calculates the total price of all items in the user's cart
+    function calculateTotal(){
+      let total = 0;
+      let priceElements = document.getElementsByClassName("price");
+      for(i = 0; i < priceElements.length; i++){
+        total += parseInt(priceElements[i].innerHTML);
+      }
+      let subTotalContainer = document.getElementById("sub-total-container").innerHTML = total;
+      let checkoutBtn = document.getElementById("checkout-btn").value = `Checkout (GHS ${total})`;
+      //stores the total value to session storage
+      sessionStorage.setItem("storedTotalValue", total);
+    }
+
+  </script>
+</html>

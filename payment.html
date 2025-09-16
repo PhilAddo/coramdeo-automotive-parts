@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="main.js"></script>
+    <title>Payment</title>
+  </head>
+  <body id="payment-page-bg-image">
+    <div id="head-container">
+      <div id="head-container-inner">
+        <h2 onclick="goToPage('index.html');" id="site-name">CORAMDEO AUTOMOTIVE PARTS</h2>
+      </div>
+      <div id="sign-in-btn-container">
+        <span><a href="login.html">SIGN IN</a></span>
+      </div>
+    </div>
+    <div id="main-container">
+        
+      <div class="section-container">
+        <h2>Payment</h2>
+        <p>Make payment</p>
+        <p>Package(s) will be delivered to your address at <b id="user-address-container">User address</b></p>
+      </div>
+
+      <div class="section-container">
+        <h2>Pay with Mobile Money</h2>
+
+        <div class="payment-container">
+            <p  class="payment-field">
+            Amount to be paid
+            <b>GHS <span id="sub-total-container">0.00</span></b>
+        </p>
+        </div>
+
+        <div class="payment-container" id="mobile-money-container">
+          <h3>Moblie Money Transfer</h3>
+          <form id="mobile-money-form" >
+            <label class="payment-field"
+              ><span>Mobile network: </span>
+              <select class="text-input">
+                <option>MTN</option>
+                <option>AT</option>
+                <option>Telecel</option>
+              </select>
+            </label>
+            <br />
+            <label class="payment-field"
+              ><span>Mobile number: </span
+              ><input
+                type="text"
+                class="text-input"
+                minlength="14"
+                maxlength="14"
+                value="+233 "
+                id="phone-num1"
+                oninput="checkPhoneNumberInput('phone-num1');"
+                required
+              /> </label
+            >
+          </form>
+          <input type="button" class="pay-btn" id="submit-btn" value="SUBMIT" onclick="processMobileMoney();" />
+
+
+        </div>
+
+      
+    </div>
+  </body>
+  <script>
+    let currentContainer = "registeration-container";
+
+    function switchContainer(id) {
+      let container1 = (document.getElementById(id).style.display = "block");
+      let container2 = (document.getElementById(
+        currentContainer
+      ).style.display = "none");
+      currentContainer = id;
+    }
+
+    let activeUserIndex = sessionStorage.getItem("activeUserIndex");
+    let signInBtnContainer = document.getElementById("sign-in-btn-container");
+    //checks if the current user is signed in
+    if(activeUserIndex != null){
+      signInBtnContainer.innerHTML = `<span onclick="signOut();">SIGN OUT</span>`;
+      let userAddress = userDataArray[activeUserIndex].residentialAddress;
+      let userAddressContainer = document.getElementById("user-address-container").innerHTML = userAddress;
+    }else{
+      signInBtnContainer.innerHTML = `<span><a href="login.html">SIGN IN</a></span>`;
+    }
+
+    //checks and corrects the inputs of phone numbers
+    function checkPhoneNumberInput(id){
+      let phoneNumElement = document.getElementById(id);
+      if(phoneNumElement.value.length < 5){
+        phoneNumElement.value = "+233 ";
+      }
+    }
+
+    //breaks the mobile money payment option into a step by step process
+    let step = 2;
+    let phoneNum1 = null, phoneNum2 = null;
+    let amountValue = 0, usrpin = null;
+    let mobileMoneyForm = document.getElementById("mobile-money-form");
+    function processMobileMoney(){      
+      switch(step){
+        case 1:
+          mobileMoneyForm.innerHTML = `
+          <label class="payment-field"
+              ><span>Mobile network: </span>
+              <select class="text-input">
+                <option>MTN</option>
+                <option>AT</option>
+                <option>Telecel</option>
+              </select>
+            </label>
+            <br />
+            <label class="payment-field"
+              ><span>Mobile number: </span
+              ><input
+                type="text"
+                class="text-input"
+                minlength="14"
+                maxlength="14"
+                value="+233 "
+                id="phone-num1"
+                oninput="checkPhoneNumberInput('phone-num1');"
+                required
+              /> </label
+            >
+          `;
+          step++;
+          break;
+          case 2:
+            //checks if the first phone number entered is valid
+            phoneNum1 = document.getElementById("phone-num1").value;
+            if(phoneNum1 == "+233 " || phoneNum1.length < 14){
+              alert("Please enter a valid phone number.");
+              break;
+            }
+            mobileMoneyForm.innerHTML = `
+            <label class="payment-field"
+              ><span>Repeat mobile number: </span
+              ><input
+                type="text"
+                class="text-input"
+                minlength="14"
+                maxlength="14"
+                value="+233 "
+                id="phone-num2"
+                oninput="checkPhoneNumberInput('phone-num2');"
+                required
+              /> </label
+            >
+            `;
+            step++;
+            break;
+            case 3:
+              //checks if the second phone number entered is valid
+              phoneNum2 = document.getElementById("phone-num2").value;
+              if(phoneNum2 == "+233 " || phoneNum2.length < 14){
+              alert("Please enter a valid phone number.");
+              return;
+              }
+              //checks if both numbers are the same
+              if(phoneNum1 != phoneNum2){
+                alert("The provided phone numbers do not match.\nPlease check and try again.");
+                step = 1;
+                processMobileMoney();
+                return;
+              }
+              mobileMoneyForm.innerHTML = `
+            <label class="payment-field"
+              ><span>Mobile money PIN: </span
+              ><input type="password" class="text-input" required id="usrpin" />
+            </label>
+            `;
+              step++;
+              break;
+            case 4:
+              if(storedTotalValue == null){
+                alert("You have no items in your cart.\nPlease add items and try again.");
+                return;
+              }
+              //checks if PIN value entered is valid
+              usrpin = document.getElementById("usrpin").value;
+              if(usrpin.trim() == ""){
+                alert("Please enter PIN value to proceed.");
+                return;
+              }
+              executePayment();
+            break;
+            default:
+              alert("Error at processMobileMoney function.");
+              break;
+      }
+
+    }
+
+    function executePayment(){
+        mobileMoneyForm.innerHTML = `
+        <center>
+        <img src="img/processing-gif.gif" id="processing-gif">
+        </center>
+        `;
+        sendSMS();
+        // setTimeout(() => {
+        //     mobileMoneyForm.innerHTML = `
+        //     <div id="success-msg-container">
+        //   <h2>Payment Successful</h2>
+        // </div><br>
+        //     `;
+        //     let submitBtn = document.getElementById("submit-btn").style.display = "none";
+        //     //empties the user's cart
+        //     userDataArray[activeUserIndex].cart = [];
+        //     sessionStorage.removeItem("storedTotalValue");
+        //     saveUserDataArray();
+        //     sendSMS();
+        // }, 3000);
+    }
+    
+    //gets and displays the stored total value
+    let storedTotalValue = sessionStorage.getItem("storedTotalValue");
+    if(storedTotalValue != null){
+      let subTotalContainer = document.getElementById("sub-total-container").innerHTML = storedTotalValue;
+    }
+
+    //attempts to use the Arkesel SMS service API to send an SMS notification to the user's registered phone number
+   async function sendSMS() {
+      const url = "https://sms.arkesel.com/api/v2/sms/send";
+      let phoneNumber = formatPhoneNumber(userDataArray[activeUserIndex].phoneNumber);
+
+      const response = await fetch(url, {  
+        method: "POST",
+        headers: {
+          "api-key": "a3l2cVNJTUV1d3pQYnlTZnZpSlo", // ⚠️
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          sender: "C AutoParts",
+          message: `Your order has been placed successfully and will be delivered to your address at ${userDataArray[activeUserIndex].residentialAddress}. Order Total: GHS ${storedTotalValue}. Thanks for shopping with us!`,
+          recipients: [phoneNumber]
+        })
+      });
+
+      const result = await response.json();
+      console.log(result);
+      checkResponse(result);
+      console.log("Response: " + JSON.stringify(result));
+    }
+
+    function formatPhoneNumber(number){
+      let num = number.slice(1);
+      return `233${num}`;
+    }
+
+    //checks if SMS was sent to user's mobile number successfully
+    function checkResponse(response){
+      if(response.status == "success"){
+         mobileMoneyForm.innerHTML = `
+            <div id="success-msg-container">
+              <h3>Your order was placed successfully. You will receive an SMS confirmation soon.</h3>
+            </div><br>
+            `;
+            let submitBtn = document.getElementById("submit-btn").style.display = "none";
+            //empties the user's cart
+            userDataArray[activeUserIndex].cart = [];
+            sessionStorage.removeItem("storedTotalValue");
+            saveUserDataArray();
+      }else{
+        mobileMoneyForm.innerHTML = `
+            <div id="error-msg-container">
+             <h3>Sorry. An error occured while placing your order. <br>Please try again later.</h3>
+            </div><br>
+            `;
+            let submitBtn = document.getElementById("submit-btn").style.display = "none";
+      }
+    }
+
+</script>
+</html>

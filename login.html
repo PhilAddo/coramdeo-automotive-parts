@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="main.js"></script>
+    <title>Log In/ Register</title>
+  </head>
+  <body id="login-page-bg-image">
+    <div id="head-container">
+      <div id="head-container-inner">
+        <h2>CORAMDEO AUTOMOTIVE PARTS</h2>
+      </div>
+    </div>
+    <center>
+      <div id="cred-body-container">
+        <div id="blur-element"></div><br>
+        <div class="cred-container" id="login-container">
+          <h3>Log In</h3>
+          <img src="img/login-img.webp" style="width: 150px; height: 150px;;">
+          <form class="form-container" id="login-form" onsubmit="logIn(event);">
+            <input
+              type="email"
+              class="text-input"
+              placeholder="Email"
+              id="user-email"
+              required
+            /><br />
+            <input
+              type="password"
+              class="text-input"
+              placeholder="Password"
+              id="user-password"
+              required
+            /><br />
+            <input type="submit" value="LOG IN" class="btn" />
+          </form>
+
+          <p>
+            Not registered yet?
+            <a class="link" onclick="switchContainer('registration-container')"
+              >Register</a
+            >
+          </p>
+        </div>
+
+        <div class="cred-container" id="registration-container">
+          <h3>Register</h3>
+          <img src="img/register-img.webp" style="width: 100px; height: 100px;">
+          <form
+            class="form-container"
+            id="registration-form"
+            onsubmit="register(event);"
+          >
+            <input
+              type="text"
+              class="text-input"
+              placeholder="First Name"
+              id="first-name-input"
+              required
+            /><br />
+            <input
+              type="text"
+              class="text-input"
+              placeholder="Last Name"
+              id="last-name-input"
+              required
+            /><br />
+            <input
+              type="date"
+              class="text-input"
+              placeholder="Date of Birth"
+              id="date-of-birth-input"
+              required
+            /><br />
+            <input
+              type="text"
+              class="text-input"
+              placeholder="Residential Address"
+              id="residential-address-input"
+              required
+            /><br />
+            <input
+              type="tel"
+              class="text-input"
+              placeholder="Phone Number"
+              id="phone-number-input"
+              value="233"
+              required
+            /><br />
+            <input
+              type="email"
+              class="text-input"
+              placeholder="Email Address"
+              id="email-address-input"
+              required
+            /><br />
+            <input
+              type="password"
+              class="text-input"
+              placeholder="Password"
+              id="password-input1"
+              required
+            /><br />
+            <input
+              type="password"
+              class="text-input"
+              placeholder="Re-enter Password"
+              id="password-input2"
+              required
+            /><br />
+            <input type="submit" value="REGISTER" class="btn" />
+          </form>
+          <br />
+          <small
+            >Password should be 6 to 15 characters long and must not be a common password.</small
+          >
+          <p>
+            Already registered?
+            <a class="link" onclick="switchContainer('login-container')"
+              >Log in</a
+            >
+          </p>
+        </div>
+      </div>
+    </center>
+
+  </body>
+  <script>
+    let currentContainer = "registration-container";
+
+    function switchContainer(id) {
+      let container1 = (document.getElementById(id).style.display = "block");
+      let container2 = (document.getElementById(
+        currentContainer
+      ).style.display = "none");
+      currentContainer = id;
+    }
+
+    window.onload = () => {
+      switchContainer("login-container");
+      sessionStorage.removeItem("activeUserIndex");
+      sessionStorage.removeItem("storedTotalValue");
+    };
+  </script>
+</html>
