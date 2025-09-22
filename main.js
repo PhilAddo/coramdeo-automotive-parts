@@ -135,6 +135,12 @@ function register(event){
     let passwordInput1 = document.getElementById("password-input1").value;
     let passwordInput2 = document.getElementById("password-input2").value;
 
+    //checks if phone number is valid
+    if(checkPhoneNumberFormat(phoneNumberInput) != "valid"){
+        alert("Invalid phone number format.\nPhone number should start with 233 followed by your number without the first '0'.\nEg: '233234567890'");
+        return;
+    }
+
     //checks if the chosen email address is already registered
     for(i = 0; i < userDataArray.length; i++){
         if(userDataArray[i].emailAddress == emailAddressInput){
@@ -180,6 +186,17 @@ function logIn(event){
 function signOut(){
     sessionStorage.removeItem("activeUserIndex");
     location.reload();
+}
+
+//checks if phone number is valid
+function checkPhoneNumberFormat(phoneNumber){
+    let res = "invalid";
+    let cCode = phoneNumber.slice(0, 3);
+    let number = phoneNumber.slice(3);
+    if(cCode == "233" && number.length == 9){
+        res = "valid";
+    }
+    return res;
 }
 
 //saves the user data array to local storage

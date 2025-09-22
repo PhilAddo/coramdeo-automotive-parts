@@ -230,7 +230,7 @@
     //attempts to use the Arkesel SMS service API to send an SMS notification to the user's registered phone number
    async function sendSMS() {
       const url = "https://sms.arkesel.com/api/v2/sms/send";
-      let phoneNumber = formatPhoneNumber(userDataArray[activeUserIndex].phoneNumber);
+      let phoneNumber = userDataArray[activeUserIndex].phoneNumber;
 
       const response = await fetch(url, {  
         method: "POST",
@@ -249,11 +249,6 @@
       console.log(result);
       checkResponse(result);
       console.log("Response: " + JSON.stringify(result));
-    }
-
-    function formatPhoneNumber(number){
-      let num = number.slice(1);
-      return `233${num}`;
     }
 
     //checks if SMS was sent to user's mobile number successfully
